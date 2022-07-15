@@ -26,5 +26,6 @@ public class PowerupScript : MonoBehaviour
         float pwerupHeight = GetComponent<SpriteRenderer>().bounds.size.y / 2;
         if (transform.position.y < (screenBounds.y * -1) + pwerupHeight)
             Destroy(this.gameObject);
+
     }
 }

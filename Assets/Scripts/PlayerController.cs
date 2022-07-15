@@ -20,5 +20,6 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 direction = transform.right * Input.GetAxisRaw("Horizontal");
         rb.velocity = direction * speed;
+
     }
 }

@@ -6,7 +6,9 @@ public class BallScript : MonoBehaviour
 {
     [SerializeField]
     private float speed, x;
-    private GameObject ball;
+    [SerializeField]
+    private float maxBallSpeed;
+    private GameObject ball, GameManager;
     private Rigidbody2D rb;
     private Vector3 reflectedPosition, movePosition, screenBounds;
     private bool bounced = false;
@@ -18,6 +20,7 @@ public class BallScript : MonoBehaviour
         screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, transform.position.z));
         float rndX = Random.Range(screenBounds.x * -1, screenBounds.x);
         movePosition = new Vector3(rndX, screenBounds.y * -1, 0);
+        GameManager = GameObject.Find("GameManager");
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -43,7 +46,7 @@ public class BallScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision != null)
+        /*if(collision != null)
         {
             if (collision.gameObject.name == "Brick")
             {
@@ -61,19 +64,34 @@ public class BallScript : MonoBehaviour
                 x = screenBounds.x > 0 ? 1 : -1;
             reflectedPosition = Vector3.Reflect(ball.transform.position * 5, new Vector3(x, y));
             bounced = true;
-        }
+        }*/
     }
 
     // Update is called once per frame
     void Update()
     {
-        float step = speed * Time.deltaTime;
-        if (bounced)
+        //float step = speed * Time.deltaTime;
+        //if (bounced)
+        //{
+        //    movePosition = reflectedPosition;
+        //    bounced = false;
+        //}
+
+        //ball.transform.position = Vector3.MoveTowards(ball.transform.position, movePosition, step);
+
+        if (rb.velocity.x > maxBallSpeed || rb.velocity.y > maxBallSpeed || rb.velocity.x < -maxBallSpeed || rb.velocity.y < -maxBallSpeed)
         {
-            movePosition = reflectedPosition;
-            bounced = false;
+            Vector2 newVelocity = rb.velocity.normalized;
+            newVelocity *= maxBallSpeed;
+            rb.velocity = newVelocity;
         }
 
-        ball.transform.position = Vector3.MoveTowards(ball.transform.position, movePosition, step);
+        float ballHeight = GetComponent<SpriteRenderer>().bounds.size.y / 2;
+        if(transform.position.y < (screenBounds.y  * -1) + ballHeight)
+        {
+            GameManager.GetComponent<GameManager>().PlayerDamage();
+            Destroy(gameObject);
+        }
+        Debug.Log(rb.velocity);
     }
 }

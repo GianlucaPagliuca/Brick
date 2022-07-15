@@ -7,13 +7,17 @@ public class GameManager : MonoBehaviour
 {
     private int score;
     private TextMeshProUGUI scoreText;
-    public GameObject brick;
+    public int health;
+    public GameObject brick, ball;
+    public bool gameOver = false;
     // Start is called before the first frame update
     void Start()
     {
         score = 0;
         scoreText = GameObject.Find("Score").GetComponent<TextMeshProUGUI>();
         SetupBricks();
+        health = 3;
+        SpawnBall();
     }
 
     public void UpdateScore(int ammount)
@@ -32,9 +36,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void PlayerDamage()
+    {
+        health--;
+        if (health > 0)
+            SpawnBall();
+        else
+        {
+            gameOver = true;
+            Time.timeScale = 0;
+        }
+           
+    }
+
+    private void SpawnBall()
+    {
+        Instantiate(ball, new Vector3(Random.Range(-7, 7), 2), new Quaternion(0, 0, 0, 0));
+    }
+
     // Update is called once per frame
     void Update()
     {
         scoreText.text = score.ToString();
+        
     }
 }
